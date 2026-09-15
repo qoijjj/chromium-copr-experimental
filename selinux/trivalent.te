@@ -1,4 +1,4 @@
-policy_module(trivalent, 1.0.0)
+policy_module(trivalent, 1.0.1)
 
 # SPDX-FileCopyrightText: Copyright 2025-2026 The Secureblue Authors
 #
@@ -92,18 +92,22 @@ allow trivalent_domain self:process { execmem getcap getsched setcap setrlimit s
 tunable_policy(`deny_ptrace',`',`
 	allow trivalent_domain self:process ptrace;
 ')
-allow trivalent_domain self:dir { manage_dir_perms };
-allow trivalent_domain self:lnk_file { manage_lnk_file_perms };
-allow trivalent_domain self:fifo_file rw_fifo_file_perms;
-allow trivalent_domain self:sem create_sem_perms;
-allow trivalent_domain self:netlink_kobject_uevent_socket client_stream_socket_perms;
-allow trivalent_domain self:user_namespace create;
-allow trivalent_domain self:unix_stream_socket { connectto rw_socket_perms };
-allow trivalent_domain self:cap_userns { sys_admin sys_chroot sys_ptrace net_admin };
+allow trivalent_domain self:dir manage_dir_perms;
+allow trivalent_domain self:lnk_file manage_lnk_file_perms;
 allow trivalent_domain self:fifo_file { manage_fifo_file_perms relabelfrom relabelto };
-allow trivalent_domain self:dir rw_dir_perms;
-allow trivalent_domain self:socket_class_set create_socket_perms;
-allow trivalent_domain self:tcp_socket { accept listen };
+allow trivalent_domain self:sem create_sem_perms;
+allow trivalent_domain self:user_namespace create;
+allow trivalent_domain self:cap_userns { sys_admin sys_chroot sys_ptrace net_admin };
+
+# Internal sockets
+allow trivalent_domain self:netlink_kobject_uevent_socket client_stream_socket_perms;
+allow trivalent_domain self:netlink_route_socket create_netlink_socket_perms;
+allow trivalent_domain self:sctp_socket create_stream_socket_perms;
+allow trivalent_domain self:tcp_socket create_stream_socket_perms;
+allow trivalent_domain self:udp_socket create_socket_perms;
+allow trivalent_domain self:unix_dgram_socket create_socket_perms;
+allow trivalent_domain self:unix_stream_socket { create_stream_socket_perms connectto };
+
 allow trivalent_domain trivalent_exec_t:file execute_no_trans;
 allow trivalent_domain chrome_sandbox_home_t:dir { manage_dir_perms };
 allow trivalent_domain chrome_sandbox_home_t:file { manage_file_perms map };
@@ -111,9 +115,7 @@ allow trivalent_domain chrome_sandbox_home_t:lnk_file { manage_lnk_file_perms };
 allow trivalent_domain trivalent_home_t:dir { manage_dir_perms };
 allow trivalent_domain trivalent_home_t:file { manage_file_perms map };
 allow trivalent_domain trivalent_home_t:lnk_file { manage_lnk_file_perms };
-allow trivalent_domain self:netlink_route_socket { nlmsg_read nlmsg_write };
 manage_files_pattern(trivalent_domain, trivalent_home_t, trivalent_home_cdm_lib_t)
-
 
 # not covered by interfaces
 allow trivalent_domain fonts_cache_t:dir mounton;

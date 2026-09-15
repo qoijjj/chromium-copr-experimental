@@ -12,7 +12,7 @@
 
 Name:           %{chromium_name}-selinux
 Epoch:          1
-Version:        1.0.0
+Version:        1.0.1
 Release:        1
 Summary:        SELinux policies for %{chromium_name_branding}
 License:        Apache-2.0 OR MIT
@@ -66,6 +66,9 @@ fi
 %ghost %verify(not md5 size mode mtime) %{_selinux_store_path}/%{selinuxtype}/active/modules/200/%{modulename}
 
 %changelog
+* Tue Sep 15 2026 secureblue <noreply@secureblue.dev> - 1:1.0.1-1
+- Remove access to unnecessary/obscure socket classes
+
 * Mon Aug 31 2026 secureblue <noreply@secureblue.dev> - 1:1.0.0-1
 - Split off trivalent-selinux into separate RPM spec
 - Set epoch to 1 and reset version scheme
